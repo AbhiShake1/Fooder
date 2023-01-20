@@ -1,9 +1,14 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, } from 'react-native'
 import { MapPinIcon, ArrowRightIcon, StarIcon } from 'react-native-heroicons/outline'
 import { useQuery } from 'react-query'
 import { urlFor } from '../../../../core/backendClient/sanityClient'
 import { AppColors } from '../../../../core/constants'
+import { RootNavigatorParamList } from '../../../../core/router/navigator'
+import { restaurantDetailRoute } from '../../../../core/router/routePath'
+import { RestaurantDetailScreen } from '../../../../feature/restaurantDetail/views/RestaurantDetailScreen'
 import { CategoryCardModel, FeaturedRowModel, RestaurantCardModel } from '../../models'
 import { getAllCategories, getFeaturedCategories } from '../../repo/homeRepo'
 
@@ -71,7 +76,7 @@ const FeaturedRow = (props: FeaturedRowModel) => {
       <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 16 }}
         showsHorizontalScrollIndicator={false} className='pt-4' >
 
-        {props.restaurants?.map(r => <RestaurantCard _id={r._id} key={r._id} title={r.title} image={r.image}
+        {props.restaurants?.map(r => <RestaurantCard _id={r._id} key={r._id} name={r.name} image={r.image}
           rating={r.rating} genre={r.genre} address={r.address} short_description={r.short_description} dishes={r.dishes}
           lat={20} lng={18}
         />
@@ -82,12 +87,19 @@ const FeaturedRow = (props: FeaturedRowModel) => {
 }
 
 const RestaurantCard = (props: RestaurantCardModel) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootNavigatorParamList, '/restaurantDetail'>>()
+
+  function pushToDetail() {
+    navigation.navigate(restaurantDetailRoute, props)
+  }
+
   return (
-    <TouchableOpacity activeOpacity={.8} className='w-48 bg-white mr-3 shadow rounded-md'>
+    <TouchableOpacity onPress={pushToDetail}
+      activeOpacity={.8} className='w-48 bg-white mr-3 shadow rounded-md'>
       <Image source={{ uri: urlFor(props.image).url() }} className='h-48 rounded-md' />
 
       <View className='px-3 pb-4'>
-        <Text className='font-bold text-lg pt-2'>{props.title}</Text>
+        <Text className='font-bold text-lg pt-2'>{props.name}</Text>
 
         <View className='flex-row items-center space-x-1'>
           <StarIcon color='green' opacity={.5} size={24} />
