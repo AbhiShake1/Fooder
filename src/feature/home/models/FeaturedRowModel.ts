@@ -1,6 +1,8 @@
+import { RestaurantCardModel } from "./RestaurantCardModel";
+
 export interface FeaturedRowModel {
-  id: string,
-  title: string,
-  description?: string,
-  featuredCategory?: 'featured' | 'discounts' | 'offers'
+  _id: string,
+  name: string,
+  short_description?: string,
+  restaurants?: RestaurantCardModel[],
 }

@@ -1,34 +1,50 @@
-import { title } from 'process'
 import React from 'react'
-import { ScrollView, TouchableOpacity, View, Text, Image, } from 'react-native'
+import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, } from 'react-native'
 import { MapPinIcon, ArrowRightIcon, StarIcon } from 'react-native-heroicons/outline'
+import { useQuery } from 'react-query'
+import { urlFor } from '../../../../core/backendClient/sanityClient'
 import { AppColors } from '../../../../core/constants'
 import { CategoryCardModel, FeaturedRowModel, RestaurantCardModel } from '../../models'
+import { getAllCategories, getFeaturedCategories } from '../../repo/homeRepo'
 
 export const HomeBody = () => {
+  const { isLoading, error, data } = useQuery('fetch_featurerd_row_key', getFeaturedCategories)
+
+  if (isLoading || error) {
+    return (
+      <View className='text-center justify-center flex-1'>
+        <ActivityIndicator />
+      </View>
+    )
+  }
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <HomeCategories />
 
-      <FeaturedRow id='1' title='featured' description='featured desc' />
-      <FeaturedRow id='2' title='discounts' description='discount desc' />
-      <FeaturedRow id='3' title='for you' description='for you desc' />
-
+      {data?.map(r => <FeaturedRow _id={r._id} key={r._id} short_description={r.short_description}
+        restaurants={r.restaurants} name={r.name} />)}
     </ScrollView >
   )
 }
 
 const HomeCategories = () => {
+  const { isLoading, error, data } = useQuery('fetch_all_cat_key', getAllCategories)
+
+  if (isLoading || error) {
+    return (
+      <View className='text-center justify-center flex-1'>
+        <ActivityIndicator />
+      </View>
+    )
+  }
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{
-      paddingHorizontal: 15, paddingTop: 10,
+      paddingHorizontal: 16, paddingTop: 8,
     }}>
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
-      <CategoryCard imageUrl='https://links.papareact.com/gn7' title='testproduct' />
+      {data?.map(d => <CategoryCard key={d._id} _id={d._id} image={d.image} name={d.name} />
+      )}
     </ScrollView >
   )
 }
@@ -36,9 +52,9 @@ const HomeCategories = () => {
 const CategoryCard = (props: CategoryCardModel) => {
   return (
     <TouchableOpacity activeOpacity={.8} className='relative mx-2'>
-      <Image source={{ uri: props.imageUrl }} className='h-24 w-24 rounded-md' />
-      <Text className='absolute bottom-1 left-1 text-white font-bold'>{props.title}</Text>
-    </TouchableOpacity>
+      {<Image source={{ uri: urlFor(props.image).url() }} className='h-24 w-24 rounded-md' />}
+      < Text className='absolute bottom-1 left-1 text-white font-bold'>{props.name}</Text>
+    </TouchableOpacity >
   )
 }
 
@@ -46,31 +62,20 @@ const FeaturedRow = (props: FeaturedRowModel) => {
   return (
     <View>
       <View className='mt-4 flex-row items-center justify-between px-4'>
-        <Text className='font-bold text-lg'>{props.title}</Text>
+        <Text className='font-bold text-lg'>{props.name}</Text>
         <ArrowRightIcon color={AppColors.primary} />
       </View>
 
-      <Text className='text-xs text-gray-500 px-4'>{props.description}</Text>
-
+      <Text className='text-xs text-gray-500 px-4'>{props.short_description}</Text>
 
       <ScrollView horizontal contentContainerStyle={{ paddingHorizontal: 16 }}
         showsHorizontalScrollIndicator={false} className='pt-4' >
-        <RestaurantCard id={1} title='momo' imageUrl='https://links.papareact.com/gn7' rating={4.5}
-          genre='Nepali' address='Putalisadak, Nepal' short_description='Everest Momo' dishes={[]}
+
+        {props.restaurants?.map(r => <RestaurantCard _id={r._id} key={r._id} title={r.title} image={r.image}
+          rating={r.rating} genre={r.genre} address={r.address} short_description={r.short_description} dishes={r.dishes}
           lat={20} lng={18}
         />
-        <RestaurantCard id={1} title='momo' imageUrl='https://links.papareact.com/gn7' rating={4.5}
-          genre='Nepali' address='Putalisadak, Nepal' short_description='Everest Momo' dishes={[]}
-          lat={20} lng={18}
-        />
-        <RestaurantCard id={1} title='momo' imageUrl='https://links.papareact.com/gn7' rating={4.5}
-          genre='Nepali' address='Putalisadak, Nepal' short_description='Everest Momo' dishes={[]}
-          lat={20} lng={18}
-        />
-        <RestaurantCard id={1} title='momo' imageUrl='https://links.papareact.com/gn7' rating={4.5}
-          genre='Nepali' address='Putalisadak, Nepal' short_description='Everest Momo' dishes={[]}
-          lat={20} lng={18}
-        />
+        )}
       </ScrollView>
     </View>
   )
@@ -79,7 +84,7 @@ const FeaturedRow = (props: FeaturedRowModel) => {
 const RestaurantCard = (props: RestaurantCardModel) => {
   return (
     <TouchableOpacity activeOpacity={.8} className='w-48 bg-white mr-3 shadow rounded-md'>
-      <Image source={{ uri: props.imageUrl }} className='h-48 rounded-md' />
+      <Image source={{ uri: urlFor(props.image).url() }} className='h-48 rounded-md' />
 
       <View className='px-3 pb-4'>
         <Text className='font-bold text-lg pt-2'>{props.title}</Text>
