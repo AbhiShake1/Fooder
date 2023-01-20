@@ -2,13 +2,16 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, } from 'react-native'
-import { MapPinIcon, ArrowRightIcon, StarIcon } from 'react-native-heroicons/outline'
+import {
+  MapPinIcon,
+  ArrowRightIcon,
+  StarIcon
+} from 'react-native-heroicons/outline'
 import { useQuery } from 'react-query'
 import { urlFor } from '../../../../core/backendClient/sanityClient'
 import { AppColors } from '../../../../core/constants'
 import { RootNavigatorParamList } from '../../../../core/router/navigator'
 import { restaurantDetailRoute } from '../../../../core/router/routePath'
-import { RestaurantDetailScreen } from '../../../../feature/restaurantDetail/views/RestaurantDetailScreen'
 import { CategoryCardModel, FeaturedRowModel, RestaurantCardModel } from '../../models'
 import { getAllCategories, getFeaturedCategories } from '../../repo/homeRepo'
 
