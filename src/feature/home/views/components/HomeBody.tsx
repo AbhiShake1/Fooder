@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
-import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, } from 'react-native'
+import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, RefreshControl, } from 'react-native'
 import {
   MapPinIcon,
   ArrowRightIcon,
@@ -15,8 +15,17 @@ import { restaurantDetailRoute } from '../../../../core/router/routePath'
 import { CategoryCardModel, FeaturedRowModel, RestaurantCardModel } from '../../models'
 import { getAllCategories, getFeaturedCategories } from '../../repo/homeRepo'
 
+let counter = 0
+
 export const HomeBody = () => {
-  const { isLoading, error, data } = useQuery('fetch_featurerd_row_key', getFeaturedCategories)
+  const { isLoading, error, data, refetch } = useQuery(`fetch_featured_${counter}_cat`, getFeaturedCategories, {
+    enabled: true,
+  })
+
+  function onRefresh() {
+    counter++
+    refetch()
+  }
 
   if (isLoading || error) {
     return (
@@ -27,11 +36,15 @@ export const HomeBody = () => {
   }
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefresh} />}
+    >
       <HomeCategories />
 
-      {data?.map(r => <FeaturedRow _id={r._id} key={r._id} short_description={r.short_description}
-        restaurants={r.restaurants} name={r.name} />)}
+      {
+        data?.map(r => <FeaturedRow _id={r._id} key={r._id} short_description={r.short_description}
+          restaurants={r.restaurants} name={r.name} />)
+      }
     </ScrollView >
   )
 }
