@@ -1,7 +1,10 @@
 import { RestaurantCardModel } from "../../feature/home/models";
-import { homeRoute, restaurantDetailRoute } from "./routePath";
+import { basketRoute, deliveryRoute, homeRoute, preparingOrderRoute, restaurantDetailRoute } from "./routePath";
 
 export type RootNavigatorParamList = {
   [homeRoute]: undefined
   [restaurantDetailRoute]: RestaurantCardModel
+  [basketRoute]: undefined
+  [preparingOrderRoute]: undefined
+  [deliveryRoute]: undefined
 }

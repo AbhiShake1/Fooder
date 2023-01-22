@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { StackNavigationProp } from '@react-navigation/stack'
 import React from 'react'
 import { ScrollView, TouchableOpacity, View, Text, Image, ActivityIndicator, RefreshControl, } from 'react-native'
 import {
@@ -45,6 +45,8 @@ export const HomeBody = () => {
         data?.map(r => <FeaturedRow _id={r._id} key={r._id} short_description={r.short_description}
           restaurants={r.restaurants} name={r.name} />)
       }
+
+      <View className='pb-48' ><Text></Text></View>
     </ScrollView >
   )
 }
@@ -103,7 +105,7 @@ const FeaturedRow = (props: FeaturedRowModel) => {
 }
 
 const RestaurantCard = (props: RestaurantCardModel) => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootNavigatorParamList, '/restaurantDetail'>>()
+  const navigation = useNavigation<StackNavigationProp<RootNavigatorParamList, '/restaurantDetail'>>()
 
   function pushToDetail() {
     navigation.navigate(restaurantDetailRoute, props)
