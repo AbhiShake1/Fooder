@@ -7,7 +7,7 @@ import { urlFor } from '../../../../core/backendClient/sanityClient'
 import { AppColors } from '../../../../core/constants'
 import { RootNavigatorParamList } from '../../../../core/router/navigator'
 import { DishModel } from '../../../home/models'
-import { addToBasket, selectBasketItems, selectBasketItemsById } from '../../slice/basketSlice'
+import { addToBasket, removeFromBasket, selectBasketItems, selectBasketItemsById } from '../../slice/basketSlice'
 
 export const RestaurantDishes = () => {
   const { params } = useRoute<RouteProp<RootNavigatorParamList, '/restaurantDetail'>>()
@@ -30,7 +30,9 @@ const DishRow = (props: DishModel) => {
 
   const count = items.length
 
-  function removeItemFromBasket() { }
+  function removeItemFromBasket() {
+    dispatch(removeFromBasket({ items: props }))
+  }
 
   function addItemToBasket() {
     dispatch(addToBasket(props))
@@ -45,7 +47,9 @@ const DishRow = (props: DishModel) => {
           <View className='flex-1 pr-2'>
             <Text className='text-lg mb-1'>{props.name}</Text>
             <Text className='to-gray-400'>{props.description}</Text>
-            {/* <currency */}
+            <Text className='text-gray-400 mt-2'>
+              रु {props.price}
+            </Text>
           </View>
 
           <View>
